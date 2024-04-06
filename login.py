@@ -33,7 +33,7 @@ def main():
             pwd.empty()
             btn.empty()
             hint.empty()
-            st.switch_page("pages/user.py")
+            st.switch_page("pages/chatbot.py")
             # # 在侧边栏中添加导航链接
             # st.sidebar.title("导航")
             # option = st.sidebar.radio("页面选择", ["首页", "个人资料", "设置"])
