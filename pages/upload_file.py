@@ -6,7 +6,7 @@ st.sidebar.page_link("pages/chatbot.py", label="聊天窗口")
 
 # st.write("这是个人资料页面")
 
-uploaded_files = st.file_uploader("Choose a PDF file", accept_multiple_files=False, type=['pdf'])
+uploaded_file = st.file_uploader("Choose a PDF file", accept_multiple_files=False, type=['pdf'])
 if uploaded_file is not None:
     bytes_data = uploaded_file.read()
     st.write("filename:", uploaded_file.name)
