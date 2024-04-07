@@ -27,30 +27,44 @@ st.sidebar.title("导航")
 st.sidebar.page_link("pages/upload_file.py", label="上传文件")
 st.sidebar.page_link("pages/chatbot.py", label="聊天窗口")
 
-st.title("MiaoMiao")
+chat_title = st.title("MiaoMiao")
 
+chat_win = st.empty()
+chat_input = st.empty()
 client =QianfanChatEndpoint(
         streaming=True, 
         model="ERNIE-Speed-8k",
         tmeperature=0.9)
 
+with chat_win.container(height=500):
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    if prompt := chat_input.chat_input("What is up?"):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
 
-if prompt := st.chat_input("What is up?"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
-
-    with st.chat_message("🐱"):
+        chat_title.title("正在输入……")
         messages = make_msg(prompt)
-        response = st.write_stream(client.stream(messages))
-    st.session_state.messages.append({"role": "🐱", "content": response})
+        response = client.invoke(messages)
+        response = response.content
+        sentences = re.split(r'[，。,.]', response)
+        sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
+        # print(sentences)
+        for sentence in sentences:
+            st.session_state.messages.append({"role": "🐱", "content": sentence})
+            chat_title.title("正在输入……")
+
+            time.sleep((random.random()*0.1+0.1)*float(len(sentence)))
+            with st.chat_message("🐱"):
+                st.markdown(sentence)
+            chat_title.title("MiaoMiao")
+            time.sleep(0.1)
 
 if st.sidebar.button("Logout"):
     st.session_state.messages = []
