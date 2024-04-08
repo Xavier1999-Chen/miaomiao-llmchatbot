@@ -1,10 +1,13 @@
 import streamlit as st
 from langchain_community.chat_models import  QianfanChatEndpoint
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain.agents import AgentType, initialize_agent, load_tools
+from langchain_community.tools import DuckDuckGoSearchRun
 import os
 import re
 import time
 import random
+
 
 def make_msg(msg):
     return [
