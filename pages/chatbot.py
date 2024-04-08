@@ -44,10 +44,14 @@ client =QianfanChatEndpoint(
         model="ERNIE-Speed-8k",
         tmeperature=0.9)
 
+llm =QianfanChatEndpoint(
+        streaming=True, 
+        model="ERNIE-Speed-8k",
+        tmeperature=0.9)
 # duckduckgo
-tools = load_tools(["ddg-search"], llm=client)
+tools = load_tools(["ddg-search"], llm=llm)
 agent = initialize_agent(
-    tools, client, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
+    tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
 )
 
 with chat_win.container(height=500):
