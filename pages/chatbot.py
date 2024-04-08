@@ -51,7 +51,7 @@ llm =QianfanChatEndpoint(
 # duckduckgo
 tools = load_tools(["ddg-search"], llm=llm)
 agent = initialize_agent(
-    tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
+    tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=False
 )
 
 with chat_win.container(height=500):
