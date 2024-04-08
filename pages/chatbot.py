@@ -45,7 +45,7 @@ client =QianfanChatEndpoint(
         tmeperature=0.9)
 
 # duckduckgo
-tools = load_tools(["ddg-search"], llm=llm)
+tools = load_tools(["ddg-search"], llm=client)
 agent = initialize_agent(
     tools, client, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
 )
