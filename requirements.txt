@@ -2,3 +2,5 @@ langchain
 qianfan
 langchain-wenxin
 duckduckgo-search
+faiss
+transformers
