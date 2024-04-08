@@ -44,15 +44,15 @@ client =QianfanChatEndpoint(
         model="ERNIE-Speed-8k",
         tmeperature=0.9)
 
-llm =QianfanChatEndpoint(
-        streaming=True, 
-        model="ERNIE-Speed-8k",
-        tmeperature=0.9)
-# duckduckgo
-tools = load_tools(["ddg-search"], llm=llm)
-agent = initialize_agent(
-    tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=False
-)
+#llm =QianfanChatEndpoint(
+#        streaming=True, 
+#        model="ERNIE-Speed-8k",
+#        tmeperature=0.9)
+## duckduckgo
+#tools = load_tools(["ddg-search"], llm=llm)
+#agent = initialize_agent(
+#    tools, llm, #agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, #verbose=False
+#)
 
 with chat_win.container(height=500):
     if "messages" not in st.session_state:
@@ -68,7 +68,7 @@ with chat_win.container(height=500):
             st.markdown(prompt)
 
         chat_title.title("正在输入……")
-        search_result = agent.run(prompt)
+        search_result = ''# agent.run(prompt)
         messages = make_msg(prompt,search_result)
         response = client.invoke(messages)
         response = response.content
