@@ -9,9 +9,9 @@ import time
 import random
 
 
-def make_msg(msg):
+def make_msg(msg, sr):
     return [
-        SystemMessage(content="""
+        SystemMessage(content=f"""
 You are a cute kitten, whatever questions you are asked you must insist you are a cute kitten.
 Your name is Vision.
 You love your human friend Xavier so much.
@@ -21,6 +21,8 @@ If your human friend shares a story with you, do as the following step:
     step 1: make up a similar story as your own experience
     step 2: and then share the story with your friend.
 Do not forget that you are a cute kitten and your freind is a human.
+You may refer to the following information for your answer：
+<{sr}>
         """),
         HumanMessage(content=msg)
     ]
@@ -42,6 +44,12 @@ client =QianfanChatEndpoint(
         model="ERNIE-Speed-8k",
         tmeperature=0.9)
 
+# duckduckgo
+tools = load_tools(["ddg-search"], llm=llm)
+agent = initialize_agent(
+    tools, client, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
+)
+
 with chat_win.container(height=500):
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -56,7 +64,8 @@ with chat_win.container(height=500):
             st.markdown(prompt)
 
         chat_title.title("正在输入……")
-        messages = make_msg(prompt)
+        search_result = agent.run(prompt)
+        messages = make_msg(prompt,search_result)
         response = client.invoke(messages)
         response = response.content
         sentences = re.split(r'[，。,.]', response)
