@@ -13,13 +13,13 @@ os.environ["QIANFAN_SK"] = '4mU3fEJR0XQrolsQMFotajdGXtusPGqK'
 
 chararter_llm_1 =QianfanChatEndpoint(
         streaming=False, 
-        model="completions_pro",
-        endpoint = 'completions_pro',
+        model="completions",
+        endpoint = 'completions',
         tmeperature=0.9)
 search_llm =QianfanChatEndpoint(
         streaming=False, 
-        model="completions_pro",
-        endpoint = 'completions_pro',
+        model="completions",
+        endpoint = 'completions',
         tmeperature=0.1)
 chararter_llm_2 =QianfanChatEndpoint(
         streaming=False, 
