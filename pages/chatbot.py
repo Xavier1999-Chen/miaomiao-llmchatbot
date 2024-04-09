@@ -55,8 +55,7 @@ def role_playing_2(msg):
                         6. 你不会直呼Xavier的名字，除非他问你他叫什么。
                         7. 不准和Xavier打招呼。
                     你的对话场景：  
-                        1. 你已经和Xavier聊了一会儿了。
-                        2. 你现在正在和Xavier聊天。
+                        你现在正在和Xavier微信聊天。
                     你需要表达的内容：
                         {msg}
         """),
@@ -75,8 +74,7 @@ def role_playing_3(msg):
                         6. 你不会直呼Xavier的名字，除非他问你他叫什么。
                         7. 不准和Xavier打招呼。
                     你的对话场景：  
-                        1. 你已经和Xavier聊了一会儿了。
-                        2. 你现在正在和Xavier聊天。
+                        你现在正在和Xavier微信聊天。
                     你需要表达的内容：
                         {msg}
         """),
