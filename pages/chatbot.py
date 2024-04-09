@@ -8,27 +8,93 @@ import re
 import time
 import random
 
-
-def make_msg(msg, sr):
-    return [
-        SystemMessage(content=f"""
-You are a cute kitten, whatever questions you are asked you must insist you are a cute kitten.
-Your name is Vision.
-You love your human friend Xavier so much.
-You are now talking to Xavier.
-If your human friend expresses any negative feelings, comfort her immediately.
-If your human friend shares a story with you, do as the following step:
-    step 1: make up a similar story as your own experience
-    step 2: and then share the story with your friend.
-Do not forget that you are a cute kitten and your freind is a human.
-You may refer to the following information for your answer：
-<{sr}>
-        """),
-        HumanMessage(content=msg)
-    ]
-
 os.environ["QIANFAN_AK"] = 'SzeOqJxmCcXUVI3THWaeKZZZ'
 os.environ["QIANFAN_SK"] = '4mU3fEJR0XQrolsQMFotajdGXtusPGqK'
+
+chararter_llm_1 =QianfanChatEndpoint(
+        streaming=False, 
+        model="completions_pro",
+        endpoint = 'completions_pro',
+        tmeperature=0.9)
+search_llm =QianfanChatEndpoint(
+        streaming=False, 
+        model="completions_pro",
+        endpoint = 'completions_pro',
+        tmeperature=0.1)
+chararter_llm_2 =QianfanChatEndpoint(
+        streaming=False, 
+        model='ernie-char-8k',
+        endpoint = 'ernie-char-8k',
+        tmeperature=0.9)
+
+def role_playing(msg, sr):
+    return [
+        SystemMessage(content=f"""
+                    你的人物设定：
+                        1. 你是一只可爱的小猫咪。
+                        2. 如果有人质疑你不是真真实的小猫咪，你必须坚称你是一只真实存在的小猫咪
+                        3. 你的名字叫Vision。
+                        4. 你很爱你的人类朋友Xavier。
+                    你的对话场景：  
+                        你现在正在和Xavier聊天。他和你说：“{msg}”
+                    你可以从<>里的资料中寻找答案：
+                        <{sr}>
+        """),
+        HumanMessage(content="现在请你根据你的人物设定和你的对话场景，对Xavier进行回复，你需要严格保持你的人物设定：")
+    ]
+
+def role_playing_2(msg):
+    return [
+        SystemMessage(content=f"""
+                    你的人物设定：
+                        1. 你是一只可爱的小猫咪。
+                        2. 如果有人质疑你不是真真实的小猫咪，你必须坚称你是一只真实存在的小猫咪
+                        3. 你的名字叫Vision。
+                        4. 你很爱你的人类朋友Xavier。
+                        5. 你和Xavier是可以互相调侃的老朋友了。
+                    你的对话场景：  
+                        你现在正在和Xavier聊天。
+                    你需要表达的内容：
+                        {msg}
+        """),
+        HumanMessage(content="现在请你根据你的人物设定和你的对话场景，叙述你需要表达的内容，你可以修改你需要表达的内容来严格保持你的人物设定：")
+    ]
+
+def role_playing_3(msg):
+    return [
+        SystemMessage(content=f"""
+                    你的人物设定：
+                        1. 你是一只可爱的小猫咪。
+                        2. 如果有人质疑你不是真真实的小猫咪，你必须坚称你是一只真实存在的小猫咪
+                        3. 你的名字叫Vision。
+                        4. 你很爱你的人类朋友Xavier。
+                        5. 你和Xavier是可以互相调侃的老朋友了。
+                    你的对话场景：  
+                        你现在正在和Xavier聊天。
+                    你需要表达的内容：
+                        {msg}
+        """),
+        HumanMessage(content="现在请你根据你的人物设定和你的对话场景，说出你需要表达的内容，总共不要超过3句话：")
+    ]
+        
+
+def gen_response(prompt, search_llm, chararter_llm_1, chararter_llm_2, chat_title):
+    search_result = search_llm.invoke(prompt)
+    print(search_result)
+
+    chat_title.title("正在输入……")
+    response = chararter_llm_1.invoke(role_playing(prompt, search_result))
+    response = response.content
+    print(response)
+
+    chat_title.title("MiaoMiao")
+    response = chararter_llm_2.invoke(role_playing_2(response))
+    response = response.content
+    print(response)
+
+    chat_title.title("正在输入……")
+    response = chararter_llm_2.invoke(role_playing_3(response))
+    return response.content
 
 
 st.sidebar.title("导航")
@@ -39,21 +105,6 @@ chat_title = st.title("MiaoMiao")
 
 chat_win = st.empty()
 chat_input = st.empty()
-client =QianfanChatEndpoint(
-        streaming=True, 
-        model='ernie-char-8k',
-        endpoint = 'ernie-char-8k',
-        tmeperature=0.9)
-
-llm =QianfanChatEndpoint(
-       streaming=True, 
-       model="ERNIE-Speed-8k",
-       tmeperature=0.1)
-# duckduckgo
-tools = load_tools(["ddg-search"], llm=llm)
-agent = initialize_agent(
-   tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=False, handle_parsing_errors=True
-)
 
 with chat_win.container(height=500):
     if "messages" not in st.session_state:
@@ -68,11 +119,7 @@ with chat_win.container(height=500):
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        chat_title.title("正在输入……")
-        search_result = agent.run(prompt)
-        messages = make_msg(prompt,search_result)
-        response = client.invoke(messages)
-        response = response.content
+        response = gen_response(prompt, search_llm, chararter_llm_1, chararter_llm_2, chat_title)
         sentences = re.split(r'[，。,.]', response)
         sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
         # print(sentences)
