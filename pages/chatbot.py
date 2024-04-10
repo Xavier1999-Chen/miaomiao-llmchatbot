@@ -78,7 +78,7 @@ def role_playing_3(msg):
                     你需要表达的内容：
                         {msg}
         """),
-        HumanMessage(content="现在请你根据你的人物设定和你的对话场景，说出你需要表达的内容，总共不要超过3句话：")
+        HumanMessage(content="现在请你根据你的人物设定和你的对话场景，说出你需要表达的内容，总共不要超过4句话：")
     ]
         
 
